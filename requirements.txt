@@ -1,0 +1,3 @@
+# Optional OCR support. ComfyUI can load the node without this package.
+# For actual OCR you also need the Tesseract executable installed on Windows.
+pytesseract>=0.3.10

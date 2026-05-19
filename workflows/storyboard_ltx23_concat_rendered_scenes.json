@@ -1,0 +1,54 @@
+{
+  "id": "ltx23-storyboard-concat-rendered-scenes",
+  "revision": 0,
+  "last_node_id": 2,
+  "last_link_id": 0,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "Note",
+      "pos": [80, 80],
+      "size": [760, 180],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Final Video Combine\n\nNachdem alle Storyboard-Szenen mit storyboard_to_ltx23_complete_scene_render.json gerendert wurden, lege die MP4s in einen Ordner oder nutze den ComfyUI Output-Ordner. Dann hier den Ordner setzen und Queue starten.\n\nDie Dateien werden alphabetisch sortiert. Benenne sie daher z. B. scene_01.mp4, scene_02.mp4, scene_03.mp4 usw."
+      ]
+    },
+    {
+      "id": 2,
+      "type": "LTXStoryboardVideoConcat",
+      "pos": [120, 340],
+      "size": [520, 180],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "final_video_path",
+          "type": "STRING",
+          "links": null,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LTXStoryboardVideoConcat"
+      },
+      "widgets_values": [
+        "C:/ComfyUI/output",
+        "*.mp4",
+        "storyboard_ltx23_final.mp4"
+      ]
+    }
+  ],
+  "links": [],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

@@ -1,0 +1,185 @@
+{
+  "id": "ltx23-storyboard-to-video-template",
+  "revision": 0,
+  "last_node_id": 10,
+  "last_link_id": 8,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "Note",
+      "pos": [80, 40],
+      "size": [760, 180],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Storyboard -> LTX 2.3 Video\n\nDiese Vorlage bereitet dein Storyboard fuer LTX 2.3 vor. Lade zusaetzlich den offiziellen LTX-2.3 Image-to-Video Workflow aus der ComfyUI Template Library oder aus ComfyUI-LTXVideo/example_workflows/2.3 und verbinde die Outputs dieser linken Gruppe mit der LTX-I2V-Strecke.\n\nZiel: panel_images -> LTXVPreprocess / LTXVImgToVideoConditionOnly, ltx_scene_prompts -> Positive Prompt, negative_prompt -> Negative Prompt, frames_per_scene -> EmptyLTXVLatentVideo length. Danach Clips per Video Combine / SaveVideo zusammenfuegen."
+      ]
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [100, 280],
+      "size": [315, 314],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [1], "slot_index": 0},
+        {"name": "MASK", "type": "MASK", "links": null, "slot_index": 1}
+      ],
+      "properties": {"Node name for S&R": "LoadImage"},
+      "widgets_values": ["ChatGPT Image 17. Mai 2026, 09_24_34.png", "image"]
+    },
+    {
+      "id": 3,
+      "type": "LTXStoryboardSplitter",
+      "pos": [500, 280],
+      "size": [390, 270],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {"name": "storyboard_image", "type": "IMAGE", "link": 1}
+      ],
+      "outputs": [
+        {"name": "panel_images", "type": "IMAGE", "links": [2, 7], "slot_index": 0},
+        {"name": "timing_setting_text_images", "type": "IMAGE", "links": [8], "slot_index": 1},
+        {"name": "description_text_images", "type": "IMAGE", "links": null, "slot_index": 2},
+        {"name": "camera_text_images", "type": "IMAGE", "links": null, "slot_index": 3},
+        {"name": "storyboard_json", "type": "STRING", "links": [3, 4], "slot_index": 4},
+        {"name": "shot_prompts", "type": "STRING", "links": null, "slot_index": 5},
+        {"name": "timing_csv", "type": "STRING", "links": [6], "slot_index": 6}
+      ],
+      "properties": {"Node name for S&R": "LTXStoryboardSplitter"},
+      "widgets_values": [6, 5, true, "deu+eng", "Storyboard", "auto", 0]
+    },
+    {
+      "id": 4,
+      "type": "LTXStoryboardVideoPromptBuilder",
+      "pos": [940, 280],
+      "size": [430, 320],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {"name": "storyboard_json", "type": "STRING", "link": 3}
+      ],
+      "outputs": [
+        {"name": "ltx_scene_prompts", "type": "STRING", "links": [5], "slot_index": 0},
+        {"name": "combined_prompt", "type": "STRING", "links": null, "slot_index": 1},
+        {"name": "negative_prompt", "type": "STRING", "links": null, "slot_index": 2},
+        {"name": "fallback_frames_per_scene", "type": "INT", "links": null, "slot_index": 3},
+        {"name": "total_frames", "type": "INT", "links": null, "slot_index": 4},
+        {"name": "scene_timing_json", "type": "STRING", "links": null, "slot_index": 5},
+        {"name": "frame_counts_csv", "type": "STRING", "links": null, "slot_index": 6}
+      ],
+      "properties": {"Node name for S&R": "LTXStoryboardVideoPromptBuilder"},
+      "widgets_values": [
+        "cinematic, realistic motion, coherent lighting, clean temporal consistency, dramatic but natural camera movement",
+        "Preserve the source image identity, subject, outfit, environment, framing, aspect ratio and color palette. Animate only the intended action and camera movement.",
+        "cartoon, video game, distorted hands, duplicated face, identity drift, bad anatomy, low quality, flicker, text, watermark",
+        24,
+        2.0,
+        true
+      ]
+    },
+    {
+      "id": 5,
+      "type": "PreviewImage",
+      "pos": [940, 660],
+      "size": [360, 260],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {"name": "images", "type": "IMAGE", "link": 2}
+      ],
+      "outputs": [],
+      "properties": {"Node name for S&R": "PreviewImage"},
+      "widgets_values": []
+    },
+    {
+      "id": 6,
+      "type": "Note",
+      "pos": [1480, 260],
+      "size": [620, 220],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "LTX 2.3 Anschlussgruppe\n\nFuege hier den offiziellen LTX-2.3 Image-to-Video Workflow ein.\n\nVerbinden:\n- panel_images -> LTXVPreprocess image\n- ltx_scene_prompts -> Positive Prompt / Text Encode\n- negative_prompt -> Negative Prompt / Text Encode\n- frames_per_scene -> EmptyLTXVLatentVideo length\n- fps im LTXVConditioning auf 24 setzen\n\nWenn dein LTX-Workflow keine String-Inputs am TextEncode hat, kopiere je Szene den Prompt aus ltx_scene_prompts in den Positive-Prompt-Node oder nutze einen String-zu-Widget Helper aus deinem Node-Pack."
+      ]
+    },
+    {
+      "id": 7,
+      "type": "Note",
+      "pos": [1480, 540],
+      "size": [620, 180],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Zusammenhaengendes Video\n\nEmpfohlen: pro Shot einen 2-Sekunden-Clip mit demselben LTX-2.3-I2V-Setup erzeugen und danach die Clips per VideoHelperSuite Video Combine oder ComfyUI SaveVideo in Reihenfolge shot_01 bis shot_06 zusammenfuegen.\n\nFuer harte Schnitte: direkt concat. Fuer weichere Uebergaenge: kurze Crossfade-Node/FFmpeg-Postprocess-Stufe nach dem Rendern."
+      ]
+    },
+    {
+      "id": 8,
+      "type": "LTXStoryboardAssetSaver",
+      "pos": [500, 660],
+      "size": [390, 260],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {"name": "panel_images", "type": "IMAGE", "link": 7},
+        {"name": "storyboard_json", "type": "STRING", "link": 4},
+        {"name": "shot_prompts", "type": "STRING", "link": 5},
+        {"name": "timing_csv", "type": "STRING", "link": 6},
+        {"name": "timing_setting_text_images", "type": "IMAGE", "link": 8}
+      ],
+      "outputs": [
+        {"name": "saved_folder", "type": "STRING", "links": null, "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "LTXStoryboardAssetSaver"},
+      "widgets_values": ["ltx23_storyboard_video", "shot"]
+    }
+  ],
+  "links": [
+    [1, 2, 0, 3, 0, "IMAGE"],
+    [2, 3, 0, 5, 0, "IMAGE"],
+    [3, 3, 4, 4, 0, "STRING"],
+    [4, 3, 4, 8, 1, "STRING"],
+    [5, 4, 0, 8, 2, "STRING"],
+    [6, 3, 6, 8, 3, "STRING"],
+    [7, 3, 0, 8, 0, "IMAGE"],
+    [8, 3, 1, 8, 4, "IMAGE"]
+  ],
+  "groups": [
+    {
+      "title": "Storyboard vorbereiten",
+      "bounding": [60, 240, 1340, 720],
+      "color": "#3f789e",
+      "font_size": 24
+    },
+    {
+      "title": "Offiziellen LTX 2.3 I2V Workflow hier einfuegen",
+      "bounding": [1440, 220, 720, 560],
+      "color": "#8b6f38",
+      "font_size": 24
+    }
+  ],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}
