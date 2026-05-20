@@ -97,6 +97,7 @@ Enthalten sind zwei praktische Workflows:
 
 - `workflows/storyboard_to_ltx23_complete_scene_render.json`
 - `workflows/storyboard_to_ltx23_complete_scene_render_rtx4060ti_16gb_safe.json`
+- `workflows/storyboard_to_ltx23_complete_scene_render_rtx4060ti_16gb_fixed.json`
 - `workflows/storyboard_ltx23_concat_rendered_scenes.json`
 
 `storyboard_to_ltx23_complete_scene_render.json` basiert auf dem offiziellen Lightricks `LTX-2.3_T2V_I2V_Single_Stage_Distilled_Full` Workflow. Vorne sind Storyboard-Load, Splitter, Prompt Builder und Scene Selector eingefuegt. Stelle im `LTX Storyboard Scene Selector` den `scene_index` auf `1`, `2`, `3` usw. und rendere die Szenenclips nacheinander. Der Scene Selector uebergibt automatisch:
@@ -137,6 +138,38 @@ Wenn ComfyUI trotzdem Out-of-Memory meldet:
 - Aufloesung auf `640 x 360` oder `360 x 640` reduzieren
 - ComfyUI mit FP8-Modell starten und keine anderen grossen Workflows offen lassen
 - Nach jedem grossen Render Cache leeren oder ComfyUI neu starten
+
+### Bekannte LTX-2.3 Textencoder/Audio-VAE Fehler
+
+Wenn ComfyUI bei `CLIPTextEncode` mit
+
+```text
+AttributeError: 'Linear' object has no attribute 'weight'
+linear(): argument 'weight' must be Tensor, not NoneType
+```
+
+abbricht, liegt das nicht am Storyboard-Splitter. Der Fehler kommt vom LTX-2.3 Textencoder-Load. Typische Ursachen:
+
+- ComfyUI ist nicht auf einem aktuellen LTX-2.3-kompatiblen Stand.
+- `ComfyUI-LTXVideo` ist veraltet.
+- `gemma_3_12B_it_fp4_mixed.safetensors` ist kaputt, unvollstaendig oder im falschen Ordner.
+- Der FP4/Mixed Textencoder ist mit der aktuell installierten PyTorch/ComfyUI-Kombination inkompatibel.
+
+Wenn vorher
+
+```text
+buffer length ... must be a multiple of element size
+```
+
+auftaucht, ist sehr wahrscheinlich ein Safetensors-Download kaputt, meistens Audio-VAE. Dann die LTX-2.3 Audio-VAE-Datei neu herunterladen.
+
+Zum Testen nutze:
+
+```text
+workflows/storyboard_to_ltx23_complete_scene_render_rtx4060ti_16gb_fixed.json
+```
+
+Diese Version reduziert die Testlast auf `640 x 360` und `33` Frames. Sie ersetzt aber keine defekten Modelldateien.
 
 ## Variable Storyboard-Layouts
 

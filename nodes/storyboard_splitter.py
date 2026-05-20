@@ -848,12 +848,58 @@ class LTXStoryboardVideoConcat:
         return (output_path,)
 
 
+class LTXStoryboardTextEncode:
+    """Encode a linked STRING prompt without relying on CLIPTextEncode widget text."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "clip": ("CLIP",),
+                "text": ("STRING", {"default": "", "multiline": True, "forceInput": True}),
+            },
+        }
+
+    RETURN_TYPES = ("CONDITIONING",)
+    RETURN_NAMES = ("conditioning",)
+    FUNCTION = "encode"
+    CATEGORY = "LTX/Storyboard"
+
+    def encode(self, clip, text: str):
+        tokens = clip.tokenize(text or "")
+        return (clip.encode_from_tokens_scheduled(tokens),)
+
+
+class LTXStoryboardPromptPreview:
+    """Show the selected scene prompt in the ComfyUI output panel."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "text": ("STRING", {"default": "", "multiline": True, "forceInput": True}),
+            },
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "preview"
+    CATEGORY = "LTX/Storyboard"
+    OUTPUT_NODE = True
+
+    def preview(self, text: str):
+        value = text or ""
+        return {"ui": {"text": [value]}, "result": (value,)}
+
+
 NODE_CLASS_MAPPINGS = {
     "LTXStoryboardSplitter": LTXStoryboardSplitter,
     "LTXStoryboardAssetSaver": LTXStoryboardAssetSaver,
     "LTXStoryboardVideoPromptBuilder": LTXStoryboardVideoPromptBuilder,
     "LTXStoryboardSceneSelector": LTXStoryboardSceneSelector,
     "LTXStoryboardVideoConcat": LTXStoryboardVideoConcat,
+    "LTXStoryboardTextEncode": LTXStoryboardTextEncode,
+    "LTXStoryboardPromptPreview": LTXStoryboardPromptPreview,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -862,4 +908,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "LTXStoryboardVideoPromptBuilder": "LTX Storyboard Video Prompt Builder",
     "LTXStoryboardSceneSelector": "LTX Storyboard Scene Selector",
     "LTXStoryboardVideoConcat": "LTX Storyboard Video Concat",
+    "LTXStoryboardTextEncode": "LTX Storyboard Text Encode",
+    "LTXStoryboardPromptPreview": "LTX Storyboard Prompt Preview",
 }
